@@ -1,14 +1,17 @@
-# Android 开发指南
+> # Android 开发指南
 
-如果你还没有安装 LeanCloud SDK，请前往 [快速入门指南](/start.html)。
+# Android develop guide
 
-如果你希望从项目里学习，请前往 [Android SDK Demos](https://github.com/leancloud/leancloud-demos#android) 。其中，我们推荐与本指南配套的 [LeanStorageDemo-Android](https://github.com/leancloud/LeanStorageDemo-Android) 项目。
+> 如果你还没有安装 LeanCloud SDK，请前往 [快速入门指南](/start.html)。
 
-## 快速入门
+Please read [Quick Start](/start.html)。
 
-建议您在阅读本文档之前，阅读我们提供的 [快速入门](/start.html) 文档，获取 LeanCloud 使用的配置和第一印象。
 
-## SDK 安装
+> 如果你希望从项目里学习，请前往 [Android SDK Demos](https://github.com/leancloud/leancloud-demos#android) 。其中，我们推荐与本指南配套的 [LeanStorageDemo-Android](https://github.com/leancloud/LeanStorageDemo-Android) 项目。
+
+Here are some demons: [Android SDK Demos](https://github.com/leancloud/leancloud-demos#android), [LeanStorageDemo-Android](https://github.com/leancloud/LeanStorageDemo-Android).
+
+> ## SDK 安装
 
 我们提供了一个针对 Android SDK 详细的安装指南：[LeanCloud Android SDK 安装指南](sdk_setup-android.html)
 
