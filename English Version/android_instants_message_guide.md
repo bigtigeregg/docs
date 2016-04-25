@@ -40,7 +40,7 @@ public class MyApplication extends Application{
 Lets talk about the simplest version of real time chatting system in android, there are two major module in this system. The User System and chat transmitting / receiving. Between each individual user system, there must exist a unique String to distinguish with others. For example userId, email, phone number, or our objectId of AVUser; at the same time this unique String can be acquire by some of the Login methods.
 
 Considering some developers already have their user system, when they want to use our real time chatting system, we did not force them to bind the status of login and real time chatting together. However we provide a more open way to control the status of user login system. When a user need to use the real time chatting module, we need:   
-
+//
 ```java                 //user name//    
 AVUser.logInInBackground("用户名","password",new LogInCallback<AVUser>(){
    @Override
@@ -61,17 +61,22 @@ AVUser.logInInBackground("用户名","password",new LogInCallback<AVUser>(){
 这样你就向服务器发起了一个实时通信的登录请求。但是至今为止还不能发送消息，因为实时通信的所有请求都是异步的，只有当你接收到异步请求对应的成功回调时，你才能进行下一步操作。
 要接收异步请求对应的回调，你需要实现继承 AVMessageReceiver 的自定义 Receiver，并且注册到AndroidManifest.xml。
 
+// After this you already send a login request. But you can't send message yet, since the real time messaging is asynchronous，as long as you got the correspond call back, you can move on to next step.
+
+
 ```java
 public class ChatDemoMessageReceiver extends AVMessageReceiver{
   ...实现抽象方法,比如：
   @Override
   public void onSessionOpen(Context context, Session session) {
     System.out.println("用户成功登录上实时聊天服务器了");
+    // System.out.println(user already login to real time chatting service)
   }
 }
 ```
 
 并且在AndroidManifest.xml中间声明:
+// need to add following in the androidManifest
 
 ```xml
 <receiver android:name=".ChatDemoMessageReceiver" >
@@ -83,26 +88,32 @@ public class ChatDemoMessageReceiver extends AVMessageReceiver{
 ```
 至此，就完成了用户的登录环节。
 不管你接下来的操作是单聊还是群聊，你都需要实现之前的所有步骤才能进行下一步的操作。
-
+// up to here, you finished the user login setp
+// no matter you want to have a one on one chatting or group chatting you need to finish those steps.
 `AVMessageReceiver` 中还有很多其他回调方法来接收其他操作的异步通知，如发送消息、接收消息等，我们将在下面的章节中介绍，它是实时通信的核心 API 之一。
-
+// AVMessageReceiver also includes lots of others' call back methods to receive the other asynchronous notification, for example trans
+mitting message, and receving message. we will going to introduce in the following chapter, which is the core API in real time messaging.
 ##单聊
-
+// one on one chatting 
 单聊的情景相对也是比较简单的，用户可以选择向任何人发送相应的消息。如果应用开启 [签名认证](./realtime.html#签名认证)，单聊前需要首先调用 watch。
-
+// one on one chating is relatively easy, user can select to send message to any one. One on one chatting first need to use watch. 
 ###添加好友
-
+// adding friend
 正如上文提到了，开启了签名认证的实时聊天系统在发送消息前需要保证发送的对象是被 watch 过的。对于已有的好友列表，你可以如上文提到的方法，在登录实时通信系统的时候放在参数中间；对于新的好友，你可以通过如下代码进行添加：
+// as mentiond in the previously, in order to start authtification of real time chatting you need to make sure that the object need to be watched first. For the exitsting list of friends, you can use the previous method. 
+For the new adding friend, you add the following code!
+
 
 ```java
 Session session = SessionManager.getInstance(selfId);
 session.watch(Arrays.asList("friend1","friend2"));
 ```
 
+
 其中 friend1、friend2 是其他用户的 peer id，下面提到的 firend id 与此类似。
-
+// in here friend1, friend2 is peer id of the other user. Below friend id is similar 
 之后添加是否成功则可以通过Receiver中的回调的方式来获悉：
-
+// we can get the result Info (success or not) though call back method of receiver.
 
 ```java
 public class ChatDemoMessageReceiver extends AVMessageReceiver{
@@ -115,21 +126,23 @@ public class ChatDemoMessageReceiver extends AVMessageReceiver{
 ```
 
 在任何一个时候你也可以通过以下代码来判断是否已经 watch 过某个用户：
-
+// at any time point you can use the following code to know if any user has been watched or not
 ```java
 Session session = SessionManager.getInstance(selfId);
 boolean watched = session.isWatching("friend1");
 ```
 
 ###发送消息
-
+// sending message 
 在用户成功登录实时消息系统以后，用户就可以进行消息的发送接收等。
-
+// after successfully login to real time chatting system, user can begin sending and receiving message.
 ```java
 Session session = SessionManager.getInstance(selfId);
 AVMessage msg = new AVMessage();
 msg.setMessage("这是一个普通的消息");
+// msg.setMessage("this is a common message)
 //friendId是指目标用户的 peer id，也就是想接收这条消息的用户。
+//friendId is the peer id of target user, it is the target user (who is going to receiving this message)
 msg.setToPeerIds(Arrays.asList(friendId));
 session.sendMessage(msg);
 ```
