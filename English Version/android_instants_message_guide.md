@@ -150,7 +150,7 @@ session.sendMessage(msg);
 ```
 
 正如上文提到的，实时通信中所有的操作都是异步操作，发送消息也是一样，针对于消息发送的结果，我们需要在之前提到的Receiver中实现对应的方法 `onMessageSent` 或者 `onMessageFailure`：
-// as previous mentioned, 
+// as previous mentioned, real time messaging is asynchronization， sending is same, for the result of sending, we need to implement the OnMessageSend and onMessageFailure in the Receiver. 
 
 ```java
 public class ChatDemoMessageReceiver extends AVMessageReceiver{
@@ -158,11 +158,13 @@ public class ChatDemoMessageReceiver extends AVMessageReceiver{
   @Override
   public void onMessageSent(Context context, Session session, AVMessage msg) {
     //这个时间是来自服务器端的时间，这样即便是多台设备中间也不会出现时间的混乱
+    // this time is comming from the server, in this case, it timing wont be a chaos between multiple devices 
      System.out.println("消息发送成功了，发送成功时间是"+msg.getTimestamp());
   }
 
   @Override
   public void onMessageFailure(Context context, Session session, AVMessage msg) {
+    
      System.out.println("消息发送失败了，可能需要在app端进行重试等");
      //重试逻辑......
   }
@@ -170,8 +172,10 @@ public class ChatDemoMessageReceiver extends AVMessageReceiver{
 ```
 
 #### 在线（瞬时）消息
-
+// transient messaging 
 有些应用可能会有指定消息是否是只有用户在线才能接收，我们在系统中间也进行了支持。将消息设置为 `transient`，那么消息只会发送给在线用户，如果用户不在线，也不会作为离线消息存储，而是直接丢弃。
+// some app wants to send message only if when user is online. In order to support this feature we set these message to transient.
+then the message can only send to online user, if user is not online, we can delete those and won't save it.
 
 ```java
 Session session = SessionManager.getInstance(selfId);
@@ -189,10 +193,12 @@ session.sendMessage(msg);
 ```
 
 默认消息都是普通消息，而非在线消息。
+//default messaging is common messaging, not online message.
 
 #### 消息回执
-
+// message receipt
 由于离线消息的存在，消息的发送成功与真正对方收到消息，可能在时间上存在一定的先后消息。应用可能想明确知道消息是否送达目标用户，我们也通过消息回执的形式来支持这样的操作：
+// since offline messaging exist, there is a time gap between sending and receiving message. App want to know if the message is actually reaching at the target user, we use receipt to support this feature.
 
 ```java
 Session session = Session.getInstance(selfId);
@@ -204,7 +210,7 @@ msg.setToPeerIds(Arrays.asList(friendId));
 ```
 
 针对消息回执，我们会产生额外的回调：
-
+// in order to support receipt, we use a additional receiver.
 ```java
 public class ChatDemoMessageReceiver extends AVMessageReceiver{
 
@@ -217,11 +223,13 @@ public class ChatDemoMessageReceiver extends AVMessageReceiver{
 ```
 
 **注:消息回执的功能仅仅能够在单聊中使用，消息接收者不能多于一人，并且要求消息不能是在线（瞬时）消息。**
-
+// messaging receipt only support one on one chating not for group chating and transient messaging.
 #### 多媒体消息
 
 实时聊天系统已经不在是多年以前的聊天室，用户往往会通过更多更丰富的多媒体内容来进行有效的交互，比如：图片，短视频，语音，地理位置等等。开发者可以通过将AVMessage中的message当做一个相对复杂的数据结构的形势来实现这样的消息内容。比如我们使用 JSON 数据作为消息内容传输
+// user can send interact function for example, image, short vedio, location, voice message. Also developer can use message in AVMessage for relatively complicate data struction to implement these content. For examplem we use JSON type for content transmit.
 
+// below is a image message
 ```java
 //示范一个简单的带图片的消息{"type":"file","content":"https://leancloud.cn/images/static/partner-iw.png"}
 HashMap<String, Object> params = new HashMap<String, Object>();
@@ -233,24 +241,27 @@ AVMessage msg = new AVMessage(JSON.toJSONString(params));
 您也可以采用其他序列化方案，只要中间格式是文本即可。
 
 ### 接收消息
-
+// receiving message
 一个客户端在实时通信系统中间不仅仅会扮演简单的发送者的概念，同时也会需要扮演接收者的角色。和之前的所有回调一样，消息的接收也是通过继承的Receiver来接收的：
+// a clint in the real time messaging not only represent a sender, also as a receiver. It is same as the every call back function.
+Message receiver also inherit the receiver. 
 
 ```java
 public class ChatDemoMessageReceiver extends AVMessageReceiver{
-
+  
   @Override
   public void onMessage(Context context, Session session, AVMessage msg) {
     //处理接收到的消息，一条新消息到达
+    //one message is arrived
   }
 }
 ```
 
 ##群聊
-
+// group chatting 
 ### 创建群组
 当你想要创建一个群组的时候，你可以通过以下代码来创建一个新的群组：
-
+// when you create a group, you need following code to create a new group 
 ```java
 Session session = SessionManager.getInstance(selfId);
 Group group = session.getGroup();
