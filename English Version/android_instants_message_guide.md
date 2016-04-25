@@ -150,6 +150,7 @@ session.sendMessage(msg);
 ```
 
 正如上文提到的，实时通信中所有的操作都是异步操作，发送消息也是一样，针对于消息发送的结果，我们需要在之前提到的Receiver中实现对应的方法 `onMessageSent` 或者 `onMessageFailure`：
+// as previous mentioned, 
 
 ```java
 public class ChatDemoMessageReceiver extends AVMessageReceiver{
