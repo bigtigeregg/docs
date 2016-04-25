@@ -36,8 +36,10 @@ public class MyApplication extends Application{
 在每一个用户系统中间，用户一定有一个唯一表示的符号来标识他们与别人的区别，比如：userId、email、手机号码或者我们提供的 AVUser 的 objectId；同时这个符号也需要能够通过某种方式（登录）而正确获取。
 由于考虑到很多开发者在接入实时通信系统时，可能已经有现成的用户系统，所以我们在设计实时通信模块的时候，并没有强制将用户系统的登录状态与实时通信的登录状态绑定到一起，而是通过一种更为开放的方式去控制实时通信的登录状态。当一个用户需要登录实时通信模块的时候，我们需要:
 
-// ## login
+
+// ##login
 Lets talk about the simplest version of real time chatting system in android, there are two major module in this system. The User System and chat transmitting / receiving. Between each individual user system, there must exist a unique String to distinguish with others. For example userId, email, phone number, or our objectId of AVUser; at the same time this unique String can be acquire by some of the Login methods.
+
 
 Considering some developers already have their user system, when they want to use our real time chatting system, we did not force them to bind the status of login and real time chatting together. However we provide a more open way to control the status of user login system. When a user need to use the real time chatting module, we need:   
 //
