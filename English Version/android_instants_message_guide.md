@@ -510,7 +510,7 @@ public class KeepAliveSignatureFactory implements SignatureFactory {
 ```
 
 最后， 在Session第一次打开时，设置SignatureFactory:
-
+// finally, after first open session, set the signatureFactory
 ```java
 Session session = SessionManager.getInstance(selfId);
 session.setSignatureFactory(new KeepAliveSignatureFactory());
