@@ -21,11 +21,16 @@ LeanCloud 的数据存储服务是建立在对象 AVObject 基础上的，每个
 
 假如我们要实现一个类似于微博的社交应用，主要有三类数据：账户、帖子、评论。以微博的帖子为例，我们可以建立一个类名为 `Post` 的 AVObject 对象，包含下面几个属性：
 
+
+
 ```
 content: "每个Java程序员必备的8个开发工具", pubUser: "LeanCloud官方客服", pubTimestamp: 1435541999
 ```
 
 属性名称必须是由字母、数字组成的字符串，属性的值可以是字符串、数字、布尔值、JSON 数组，甚至可以嵌套其他 AVObject 。每个 AVObject 有一个类名，也是 Dashboard 里的数据表名。
+
+attribute must be str number boolean, json array, also can contain AVObject. 
+ 
 
 ### 保存对象
 
@@ -43,7 +48,10 @@ try {
 }
 ```
 
-成功运行以上代码后，数据就已经保存到 LeanCloud。为确认这一点，你可以用 LeanCloud 控制台的数据浏览器查看 [该应用的数据](/data.html?appid={{appid}})，找到这个对象：
+成功运行以上代码后，数据就已经保存到 LeanCloud。为确认这一点，你可以用 LeanCloud 控制台的数据浏览器查看 
+// Run this code, data already save to LeanCloud.
+
+[该应用的数据](/data.html?appid={{appid}})，找到这个对象：
 
 ```java
 objectId: "558e20cbe4b060308e3eb36c", content: "每个Java程序员必备的8个开发工具", pubUser: "LeanCloud官方客服", pubTimestamp: 1435541999,
@@ -51,6 +59,7 @@ createdAt:"2015-06-29 09:39:35", updatedAt:"2015-06-29 09:39:35"
 ```
 
 因为 AVObject 是无模式的，后续你可以向 `Post` 里面增加新的属性，例如发布者信息中还包括头像、认证等级等：
+// You can add new attribute to Post any time for example profile image, certification.
 
 ```java
 AVObject post = new AVObject("Post");
@@ -69,6 +78,9 @@ try {
 这里需要注意几点：
 
 * 在运行以上代码时，如果云端（LeanCloud 的服务器，以下简称云端）不存在 `Post` 数据表，那么 LeanCloud 将根据你第一次（也就是运行的以上代码）保存的 `Post` 对象来创建数据表，并且插入相应数据。
+
+// after run this code, if leancloud doesn't have Post tabel, then LeanCloud will use the first run data to create a data table and insert data
+
 * 如果云端的这个应用中已经存在名为 `Post` 的数据表，而且也包括 `content`、`pubUser`、`pubTimestamp` 等属性，新加入属性的值的数据类型要和创建该属性时一致，否则保存数据将失败。
 * 每个 AVObject 对象有几个保存元数据的属性是不需要开发者指定的，包括 `objectId` 是每个成功保存的对象的唯一标识符。`createdAt` 和 `updatedAt` 是每个对象在服务器上创建和最后修改的时间。这些属性的创建和更新是由系统自动完成的，请不要在代码里使用这些属性来保存数据。
 * 在 Android 平台上，大部分的代码是在主线程上运行的，如果在主线程上进行耗时的阻塞性操作，如访问网络等，**你的代码可能会无法正常运行**，避免这个问题的方法是**把会导致阻塞的同步操作改为异步**，在一个后台线程运行，例如 `save()` 还有一个异步的版本 **`saveInBackground()`**，需要传入一个在异步操作完成后运行的回调函数。查询、更新、删除操作也都有对应的异步版本。
