@@ -627,7 +627,7 @@ query.whereEndsWith("pubUser", "LeanCloud");
 ```
 
 ### 查询数组值
-
+query array
 如果一个 Key 对应的值是一个数组，你可以查询 Key 的数组包含了数字 208 的所有对象，通过：
 
 ```java
@@ -647,7 +647,7 @@ query.whereContainsAll("arrayKey", numbers);
 ```
 
 ### 查询对象个数
-
+query the counts of object
 如果你只是想统计有多少个对象满足查询，你并不需要获取所有匹配的对象，可以直接使用 `count` 替代 `find`。例如，查询一个账户发了多少微博：
 
 ```java
@@ -1055,7 +1055,7 @@ public class MyUser extends AVUser {
 ```
 
 不需要添加 `@AVClassname` 注解，所有 AVUser 的子类的类名都是内建的 `_User`。同样也不需要注册 `MyUser`。
-
+// AVUser  
 当用户子类化 AVUser 后，如果希望以后查询 AVUser 所得到的对象会自动转化为用户子类化的对象，则需要在调用 `AVOSCloud.initialize()` 之前添加：
 
 ```
@@ -1359,11 +1359,12 @@ String url = file.getThumbnailUrl(false, 200, 100);
 ```
 
 ## 用户
+//user 
 用户是一个应用程序的核心。对于个人开发者来说，能够让自己的应用程序积累到多的用户，就能给自己带来更多的创作动力。因此 LeanCloud 提供了一个专门的用户类，AVUser 来自动处理用户账户管理所需的功能。
 有了这个类，你就可以在你的应用程序中添加用户帐户功能。
 
 AVUser 是一个 AVObject 的子类，它继承了 AVObject 所有的方法，具有 AVObject 相同的功能。不同的是，AVUser 增加了一些特定的关于用户账户相关的功能。
-
+// AVuser is subclass of AVObject, it inherit AVObject method. and have the same function of AVOOBject. The Different is AVUser add some special function about account.
 ### 属性
 
 AVUser 除了从 AVObject 继承的属性外，还有几个特定的属性：
@@ -1373,7 +1374,7 @@ AVUser 除了从 AVObject 继承的属性外，还有几个特定的属性：
 * email: 用户的电子邮件地址（可选）。
 
 和其他 AVObject 对象不同的是，在设置 AVUser 这些属性的时候不是使用的 `put` 方法，而是专门的 `setXXX` 方法。
-
+// 
 ### 注册
 
 你的应用程序会做的第一件事可能是要求用户注册。下面的代码是一个典型的注册过程：
