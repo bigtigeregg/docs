@@ -1406,14 +1406,15 @@ user.signUpInBackground(new SignUpCallback() {
 
 当用户注册成功后，你需要让他们以后能够登录到他们的账户后使用应用。要做到这样一点，你可以使用
 AVUser 类的 `loginInBackground` 方法。
+after user successful regitser, you need to login them to their account
 
 ```java
 AVUser.logInInBackground("username", "password", new LogInCallback() {
     public void done(AVUser user, AVException e) {
         if (e == null) {
-            // 登录成功
+            // 登录成功 login success
         } else {
-            // 登录失败
+            // 登录失败 login failed
         }
     }
 });
@@ -1424,7 +1425,7 @@ AVUser.logInInBackground("username", "password", new LogInCallback() {
 如果用户在每次打开你的应用程序时都要登录，这将会直接影响到你应用的用户体验。为了避免这种情况，你可以使用缓存的 `currentUser` 对象。
 
 每当你注册成功或是第一次登录成功，都会在本地磁盘中有一个缓存的用户对象，你可以这样来获取这个缓存的用户对象来进行登录：
-
+current user.. when you login first time, there will be a cache used for store user object to login
 ```java
 AVUser currentUser = AVUser.getCurrentUser();
 if (currentUser != null) {
@@ -1435,7 +1436,7 @@ if (currentUser != null) {
 ```
 
 当然，你也可以使用如下方法清除缓存用户对象：
-
+use below to clean the cache
 ```java
 AVUser.logOut();             //清除缓存用户对象
 AVUser currentUser = AVUser.getCurrentUser(); // 现在的currentUser是null了
@@ -1470,7 +1471,7 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 用户邮箱验证后，会调用 `AV.Cloud.onVerified('email',function)` 的 [云引擎回调函数](leanengine_guide-cloudcode.html#用户验证通知函数)，方便你做一些后处理。
 
 ### 修改密码
-
+// change password
 当用户系统中存在密码的时候，就会存在用户更改密码的需求，对于这种情况，我们提供了一种方法，能够同时验证老密码和修改新密码:
 
 ```java
@@ -1489,7 +1490,7 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 
 验证邮件对于很多应用来说并非是必须的，然而一旦遭遇到恶劣的强注事件时，通过验证邮件来阻拦 spam 用户的攻击就成为最直接和简便的方法。LeanCloud 同样也提供了这样的方法，让用户免去这方面的担忧。
 发送验证邮件的流程也很简单，在开发者获得用户的邮箱之后就可以发送验证邮件：
-
+// register email 
 ```java
         AVUser.requestEmailVerfiyInBackground(email, new RequestEmailVerifyCallback() {
 
@@ -1503,10 +1504,11 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 关于自定义邮件模板和验证链接，请参考博客文章 [《自定义应用内用户重设密码和邮箱验证页面》](https://blog.leancloud.cn/607/)。
 
 ###  手机号码验证
-
+phone num check
 在 [控制台 > 设置 > 应用选项 > 用户账号](/app.html?appid={{appid}}#/permission) 中打开 **用户注册时，向注册手机号码发送验证短信** 选项后，当你在注册用户时，如果提供了手机号码，LeanCloud 会自动向该手机号码发送一个验证短信，用户在输入验证码以后，该用户就被表示为已经验证过手机。
 
 以下代码就可发送注册验证码到用户手机:
+below will sent a register code to user phone
 ```java
     AVUser user = new AVUser();
     user.setUsername("hang@leancloud.rocks");
@@ -1525,7 +1527,7 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 ```
 
 调用以下代码即可验证验证码:
-
+// use following for checking the code
 ```java
       AVUser.verifyMobilePhoneInBackground(smsCode, new AVMobilePhoneVerifyCallback() {
 
@@ -1540,7 +1542,7 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 验证成功后，在控制台，用户的记录 `mobilePhoneVerified` 属性变为 true，并且调用云引擎的 `AV.Cloud.onVerifed('sms', function)` 方法。
 
 ### 手机号码登录
-
+// phone number login
 在手机号码被验证后，用户可以使用手机号码进行登录。手机号码包括两种方式：手机号码＋密码方式，手机号码＋短信验证码方式。
 
 以下为手机号码＋密码来登录的方式：
@@ -1561,6 +1563,7 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
     });
 ```
 最后使用短信验证码＋手机号码进行登录:
+// use message to get the code + phone number to login
 ```java
     AVUser.loginBySMSCodeInBackground("13613613613", smsCode, new LogInCallback<AVUser>() {
 
@@ -1572,7 +1575,7 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 ```
 
 ### 手机号码重置密码
-
+// use phone number to reset the password
 如果用户使用手机号码注册或者验证过手机号码，你也可以通过手机短信来实现`忘记密码`功能：
 ```java
    AVUser.requestPasswordResetBySmsCodeInBackground("12312312312", new RequestMobileCodeCallback() {
@@ -1600,11 +1603,11 @@ AVUser.requestPasswordResetInBackground("myemail@example.com", new RequestPasswo
 
 
 ### 查询
-
+query user
 **请注意，新创建应用的 `_User` 表的查询权限默认是关闭的，通常我们推荐你在云引擎里封装用户查询，只查询特定条件的用户，避免开放用户表的全部查询权限。此外，你可以通过 class 权限设置打开查询权限，请参考 [数据与安全 - Class 级别的权限](data_security.html#Class_级别的_ACL)。**
 
 查询用户，你需要使用特殊的用户查询对象来完成：
-
+query object
 ```java
 AVQuery<AVUser> query = AVUser.getQuery();
 query.whereEqualTo("gender", "female");
@@ -1620,7 +1623,7 @@ query.findInBackground(new FindCallback<AVUser>() {
 ```
 
 ### 匿名用户
-
+anonymous user
 如果你的应用需要使用一个相对弱化的用户系统时，你可以考虑 LeanCloud 提供的匿名用户系统来实现你的功能。
 
 你只需要一行代码就可以获取以后一个匿名的用户账号：
@@ -1634,16 +1637,16 @@ query.findInBackground(new FindCallback<AVUser>() {
 ```
 
 当你的用户系统兼有匿名和“实名”的账号时，你可以通过 `AVUser.isAnonymous()`来判断是否是一个匿名用户。
-
+// use AVUser.isAnonymous() to determine if this is a anonymous user.
 ### 浏览器中查看用户表
 
 User 表是一个特殊的表，专门存储 AVUser 对象。在浏览器端，你会看到一个 _User 表。
-
+// user is use for store AVUser object
 ## 地理位置
 LeanCloud 允许用户根据地球的经度和纬度坐标进行基于地理位置的信息查询。你可以在 AVObject 的查询中添加一个 `AVGeoPoint` 的对象查询。你可以实现轻松查找出离当前用户最接近的信息或地点的功能。
 
 ### 地理位置对象
-
+// geo object
 首先需要创建一个 `AVGeoPoint` 对象。例如，创建一个北纬 39.9 度、东经 116.4 度的 `AVGeoPoint` 对象（LeanCloud 北京办公室所在地）：
 
 ```java
@@ -1651,13 +1654,13 @@ AVGeoPoint point = new AVGeoPoint(39.9, 116.4);
 ```
 
 添加地理位置信息
-
+// add geo info
 ```java
 postObject.put("location", point);
 ```
 
 ### 地理查询
-
+// Geo query you can use AVQuery where Near to get nearby info.
 现在，你的数据表中有了一定的地理坐标对象的数据，这样可以测试找出最接近某个点的信息了。你可以使用 AVQuery  对象的 `whereNear` 方法来这样做：
 
 ```java
