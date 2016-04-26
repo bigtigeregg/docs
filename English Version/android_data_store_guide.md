@@ -82,9 +82,10 @@ try {
 // after run this code, if leancloud doesn't have Post tabel, then LeanCloud will use the first run data to create a data table and insert data
 
 * 如果云端的这个应用中已经存在名为 `Post` 的数据表，而且也包括 `content`、`pubUser`、`pubTimestamp` 等属性，新加入属性的值的数据类型要和创建该属性时一致，否则保存数据将失败。
+* // if Post data table contains content pubUser, pubTimestamp, new inserting data structure should be same as the initial one, otherwise data won't be saved
 * 每个 AVObject 对象有几个保存元数据的属性是不需要开发者指定的，包括 `objectId` 是每个成功保存的对象的唯一标识符。`createdAt` 和 `updatedAt` 是每个对象在服务器上创建和最后修改的时间。这些属性的创建和更新是由系统自动完成的，请不要在代码里使用这些属性来保存数据。
 * 在 Android 平台上，大部分的代码是在主线程上运行的，如果在主线程上进行耗时的阻塞性操作，如访问网络等，**你的代码可能会无法正常运行**，避免这个问题的方法是**把会导致阻塞的同步操作改为异步**，在一个后台线程运行，例如 `save()` 还有一个异步的版本 **`saveInBackground()`**，需要传入一个在异步操作完成后运行的回调函数。查询、更新、删除操作也都有对应的异步版本。
-
+// when u want to save the data to leancloud use saveInBackground, otherwise it will block the main thread.
 **注意：以下为系统保留字段，不能作为属性名来使用。**
 
 ```
@@ -97,7 +98,7 @@ description     objectId
 ```
 
 #### 保存选项
-
+// save option
 `AVObject` 对象在保存时可以通过设置 `AVSaveOption` 来指定保存选项。`AVSaveOption`有以下属性支持：
 
 选项 | 类型 | 说明
@@ -106,7 +107,7 @@ description     objectId
 `query` | AVQuery  | 当 query 中的条件满足后对象才能成功保存，否则放弃保存，并返回错误码 305。<br/><br/>开发者原本可以通过 `AVQuery` 和 `AVObject` 分两步来实现这样的逻辑，但如此一来无法保证操作的原子性从而导致并发问题。该选项可以用来判断多用户更新同一对象数据时可能引发的冲突。
 
 以下为 `query` 选项的用法：
-
+// use the code below to query
 ``` java
 
     AVObject object = new AVObject("ObjectSaveWithQuery");
