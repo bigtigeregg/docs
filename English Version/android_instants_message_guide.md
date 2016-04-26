@@ -448,18 +448,22 @@ public class DemoGroupMessageReceiver extends AVGroupMessageReceiver{
 ```
 
 ##　权限管理
+//permission management 
 在LeanCloud中间的权限管理与传统的 token 机制略有不同，我们通过签名服务来实现实时通信过程中间部分操作的权限管理。
 在阅读下面的代码前，你可能需要先了解一下有关权限管理的基本概念：[权限和认证](./realtime.html#权限和认证)。
 
 在实时聊天系统中间，很多操作是需要有权限控制才能操作成功的,比如：单聊的添加好友，群组的邀请、剔除操作等，都需要做一定权限认证。
+// in real time chatting, you have to setup permission in order to use, adding friend to one on one chattring, group request, removing.
 客户端传一些参数给自有用户系统或者云引擎（统称权限管理服务器），权限管理服务器端根据一定的逻辑判断操作是否合法，如果该操作是合法的，则返回一个正确的签名；如果是非法的，就返回一个错误的签名。之后在实时通信的过程中就会将返回的签名带在通信的请求中，LeanCloud的实时通信服务器会比对自己算出来的签名与客户端传递过来的签名是否一致来获知该操作是否合法。
 
 完成一个简单的权限管理认证系统，你需要以下几个步骤（下面以LeanCloud的云引擎服务作为权限认证服务器为例）：
-
+// in order to setup a permission system you have to setup in following steps
 1. 部署云引擎[签名范例](https://github.com/leancloud/realtime-messaging-signature-cloudcode)代码到LeanCloud的云引擎服务器
+// first setup the cloud engine to LeanCloud server
 2. 在LeanCloud中你的项目对应的网页控制台的`设置`->`应用选项`->`聊天推送`中打开`聊天服务签名认证`
+// in the web console of LeanCloud, open chatting permission signiture 
 3. 在 SDK 中间继承 SignatureFactory 抽象类
-
+// inherit SignatureFactory abstract class in SDK
 ```java
 public class KeepAliveSignatureFactory implements SignatureFactory {
  @Override
