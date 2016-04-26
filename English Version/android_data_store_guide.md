@@ -127,9 +127,9 @@ description     objectId
 ```
 
 ### 数据检索
-
+// data query
 使用 LeanCloud 查询数据比保存更容易。如果你已经知道某条数据的 `objectId`，可以使用 AVQuery  直接检索到一个完整的 AVObject ：
-
+// if you know the objectId of one data, you could use AVQuery to direct query a complete AVObject.
 ```java
 AVQuery<AVObject> query = new AVQuery<AVObject>("Post");
 AVObject post;
@@ -141,7 +141,7 @@ try {
 ```
 
 要从检索到的 AVObject 实例中获取值，可以使用相应的数据类型的 `getType` 方法：
-
+// get the data inside of AVObject
 ```
 String content = post.getString("content");
 String userName = post.getString("pubUser");
@@ -151,7 +151,7 @@ int userVerified = post.getInt("pubUserCertificate");
 ### 在后台工作
 
 在 Android 平台上，大部分代码是在主线程上运行的，如果在主线程上进行耗时的阻塞性操作，例如查询大量数据，你的代码可能无法正常运行。避免这个风险的办法是变同步为异步，LeanCloud SDK 提供了现成的异步解决方案。例如，我们使用 `saveInBackground` 方法来在一个后台线程中保存之前的 AVObject 对象：
-
+// use saveInBackground to save in android
 ```java
 post.saveInBackground();
 ```
@@ -159,7 +159,7 @@ post.saveInBackground();
 开发者不需要自己动手实现多线程，`saveInBackground()` 的操作将在后台线程中进行，不会影响应用程序的响应。
 
 通常情况下，我们希望知道后台线程任务的结果，比如保存数据是否成功？LeanCloud 也为此提供了回调类。对于 `saveInBackground()` 方法，有一个 `saveCallback` 回调方式。最简单的使用方法是写一个匿名内部类来接收回调结果。例如你想知道保存数据是否成功：
-
+// save call back
 ```java
 post.saveInBackground(new SaveCallback() {
     public void done(AVException e) {
@@ -190,7 +190,7 @@ query.getInBackground("558e20cbe4b060308e3eb36c", new GetCallback<AVObject>() {
 ```
 
 ### 更新对象
-
+// update object
 更新保存在云端的对象也是非常简单的。首先获取到要更新的 AVObject 实例，进行修改后再保存即可。例如：
 
 ```java
@@ -219,7 +219,7 @@ post.saveInBackground(new SaveCallback() {
 上面的例子是先查询出对象，然后修改属性，调用 saveInBackground 保存。
 
 如果你已经知道了 objectId（例如从查询后的列表页进入一个详情页面，传入了 objectId），想要修改一个对象，也可以采用类似下面的代码来更新对象属性：
-
+// if you know object use code below to update attribute 
 ```java
 // 知道 objectId，创建 AVObject
 AVObject post = AVObject.createWithoutData("Post", "5590cdfde4b00f7adb5860c8");
@@ -230,9 +230,9 @@ post.saveInBackground();
 ```
 
 ### 计数器
-
+// counter
 许多应用都需要实现计数器功能——比如一条微博，我们需要记录有多少人喜欢或者转发了它。但可能很多次喜欢都是同时发生的，如果在每个客户端都直接把它们读到的计数值增加之后再写回去，那么极容易引发冲突和覆盖，导致最终结果不准。这时候怎么办？LeanCloud 提供了便捷的原子操作来实现计数器：
-
+// if you want to counts the tweets, there will be lots of request happens at the same time it may cover the previous use upvotes it will works as "counter++"
 ```java
 AVObject post = new AVObject("Post");
 post.put("upvotes", 0); //初始值为 0
@@ -249,9 +249,9 @@ post.saveInBackground();
 另外，通过使用 `increment(key, amount)` 方法，你可以自行定义增减的幅度。
 
 ### 更新后获取最新值
-
+// get the new value after update
 为了减少网络传输，在更新对象操作后，对象本地的 `updatedAt` 字段（最后更新时间）会被刷新，但其他字段不会从云端重新获取。通过设置 `fetchWhenSave` 属性为 `true`，来获取更新字段在服务器上的最新结果，例如：
-
+// use fetch when save to get the updated result
 ```java
 post.setFetchWhenSave(true);
 post.increment("upvotes");
@@ -265,10 +265,10 @@ post.saveInBackground(new SaveCallback() {
 ```
 
 这个特性在实现某些计数操作，譬如减库存时特别有用，每次递减库存后，可以检查最新的值是否小于 0，来判断是否售空。
-
+// this can be use to inventory control, total number decrease to 0.
 
 ### 删除对象
-
+// delete object
 从云端删除对象，请调用该对象的 `deleteInBackground()` 方法。如果你不在乎会阻塞主线程，也可以使用 `delete()` 方法。确认删除是否成功，你可以使用 `DeleteCallback` 回调来处理删除操作的结果。
 
 ```java
@@ -327,16 +327,20 @@ AVObject.deleteAll(objects);
 注：LeanCloud 云端是通过 Pointer 类型来解决这种数据引用的，并不会将数据 a 在数据 b 的表中再额外存储一份，这也可以保证数据的一致性。
 
 例如：一条微博信息可能会对应多条评论。创建一条微博信息并对应一条评论信息，你可以这样写：
+relational object. one tweet can have multiple reviews. 
 
 ```java
 // 创建微博信息
+// create a tweet
 AVObject myWeibo = new AVObject("Post");
 myWeibo.put("content", "作为一个程序员，你认为回家以后要不要继续写代码？");
 
+// create comment
 // 创建评论信息
 AVObject myComment = new AVObject("Comment");
 myComment.put("content", "我若是写代码，进入状态之后最好不要停。下不下班已经不重要了，那种感觉最重要。");
 
+// add comment to tweet (make it relational)
 // 添加一个关联的微博对象
 // 如果需要预先建表，可以在 Comment 表中建立一个 Pointer 属性的 post 列；一般情况下不需要这么做。
 myComment.put("post", myWeibo);
