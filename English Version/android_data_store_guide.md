@@ -350,14 +350,15 @@ myComment.saveInBackground();
 ```
 
 你也可以通过 objectId 来关联已有的对象：
-
+// use the objectId to put the comment to a object with(objectId)
 ```java
 // 把评论关联到 objectId 为 5590cdfde4b00f7adb5860c8 的这条微博上
+// relate this commant to a object with objectId 5590cdfde4b00f7adb5860c8
 myComment.put("post", AVObject.createWithoutData("Post", "5590cdfde4b00f7adb5860c8"));
 ```
 
 默认情况下，当你获取一个对象的时候，关联的 AVObject 不会被获取。这些对象除了 `objectId` 之外，其他属性值都是空的，要得到关联对象的全部属性数据，需要再次调用 `fetch` 系方法（下面的例子假设已经通过 AVQuery  得到了 Comment 的实例）:
-
+// when u want to query the related object you need to use fetch
 ```java
 fetchedComment.getAVObject("post")
     .fetchIfNeededInBackground(new GetCallback<AVObject>() {
@@ -368,6 +369,7 @@ fetchedComment.getAVObject("post")
 ```
 
 还有另外一种复杂的情况，你可以使用 AVRelation 来建模多对多关系。这有点像 List 链表，但是区别之处在于，在获取附加属性的时候，AVRelation 不需要同步获取关联的所有 AVObject 实例。这使得 AVRelation 比链表的方式可以支持更多实例，读取方式也更加灵活。例如，一个 `User` 可以喜欢很多 `Post`。这种情况下，就可以用 `getRelation` 方法保存一个用户喜欢的所有 `Post` 集合。为了新增一个喜欢的 `Post`，你可以这样做：
+// complecate cases, you can use AVRelation to build a multi to multi relationship
 
 ```java
 AVUser user = AVUser.getCurrentUser();
@@ -377,12 +379,13 @@ user.saveInBackground();
 ```
 
 你可以从 AVRelation 中移除一个 Post:
-
+use avrelation to remove a post
 ```java
 relation.remove(post);
 ```
 
 默认情况下，处于关系中的对象集合不会被同步获取到。你可以通过 `getQuery` 方法返回的 AVQuery  对象，使用它的 `findInBackground` 方法来获取 Post 链表，像这样：
+in default. u could use getQuery method to return AVQuery object, use findInBackGround to ge the Post.
 
 ```java
 relation.getQuery().findInBackground(new FindCallback<AVObject>() {
@@ -398,6 +401,7 @@ relation.getQuery().findInBackground(new FindCallback<AVObject>() {
 
 如果你只想获取链表的一个子集合，你可以添加更多的约束条件到 `getQuery` 返回 AVQuery  对象上（这一点是直接使用 List 作为属性值做不到的），例如：
 
+
 ```java
 AVQuery<AVObject> query = relation.getQuery();
 // 在 query 对象上可以添加更多查询约束
@@ -406,7 +410,7 @@ query.limit(10);
 ```
 
 如果你已经持有一个 post 对象，想知道它被哪些 User 所喜欢，你可以反向查询（同样，这也是直接使用 List 作为属性值无法完成的），像这样：
-
+if you already have a post object, you want to know who is like it, you can reverse query to get the object
 ```java
 // 假设 myPost 是已知的 Post 对象
 AVQuery<AVObject> userQuery = AVRelation.reverseQuery("_User","likes",myPost);
@@ -423,10 +427,10 @@ userQuery.findInBackground(new FindCallback<AVObject>() {
 更多关于 AVQuery 的信息，请看本指南的查询部分。查询的时候，一个 AVRelation 对象运作起来像一个对象链表，因此任何你作用在链表上的查询（除了 include），都可以作用在 AVRelation 上。
 
 ### 数据类型
-
+data type
 目前为止，我们支持的数据类型有 String、Int、Boolean、Float、Double、BigDecimal 以及 AVObject 对象类型。同时 LeanCloud 也支持 java.util.Date、byte[] 数组、JSONObject、JSONArray 数据类型。
 你可以在 JSONArray 对象中嵌套 JSONObject 对象存储在一个 AVObject 中：
-
+up to here, we support data type has String, Int Boolean, float, double, bigdecimal . 
 
 ```java
 int myNumber = 2014;
@@ -480,11 +484,13 @@ try{
 ```
 
 ## 查询
+query
 
 ### 基本查询
+basic query
 在许多情况下，`getInBackground` 是不能检索到符合你的要求的数据对象的。AVQuery 提供了不同的方法来查询不同条件的数据。
 使用 AVQuery 时，先创建一个 AVQuery 对象，然后添加不同的条件，使用 `findInBackground` 方法结合 `FindCallback` 回调类来查询与条件匹配的 AVObject 数据。例如，查询指定人员的微博信息，使用 `whereEqualTo` 方法来添加条件值：
-
+getInBackGround cannot query data object, AVQuery provide different method to query data. first create AVQuery object use findInbackground and findcallback。
 ```java
 AVQuery<AVObject> query = new AVQuery<AVObject>("Post");
 query.whereEqualTo("pubUser", "LeanCloud官方客服");
@@ -500,6 +506,7 @@ query.findInBackground(new FindCallback<AVObject>() {
 ```
 
 `findInBackground` 方法是在后台线程中执行查询数据操作，它和 `getInBackground` 的运行方式是一样的。如果你已经运行在一个后台上，那么你可以在你的后台线程中直接使用 `query.find()` 方法来获取数据：
+findInBackground use the backend thread to query data. u could use query find to get the data.
 
 ```java
 // 如果你的代码已经运行在一个后台线程，或只是用于测试的目的，可以使用如下方式。
@@ -513,7 +520,7 @@ try {
 ```
 
 ### 查询条件
-
+query condition
 如果要过滤掉特定键的值时可以使用 `whereNotEqualTo` 方法。比如需要查询 `pubUser` 不等于 「LeanCloud官方客服」的数据时可以这样写：
 
 ```java
@@ -521,7 +528,7 @@ query.whereNotEqualTo("pubUser", "LeanCloud官方客服");
 ```
 
 当然，你可以在查询操作中添加多个约束条件，来过滤符合要求的数据。这些条件之间是 and 关系，即 `where a == b and c == d`。若想用 or 关系来组织约束条件，要使用 [复合查询](#复合查询)。
-
+you can add multiple condition to query
 ```java
 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 query.whereNotEqualTo("pubUser", "LeanCloud官方客服");
@@ -529,9 +536,10 @@ query.whereGreaterThan("createdAt", format.parse("2015-06-26 18:37:09"));
 ```
 
 有些时候，在数据比较多的情况下，你希望只查询符合要求的多少条数据即可，这时可以使用 `setLimit` 方法来限制查询结果的数据条数。默认情况下 Limit 的值为 100，最大 1000，在 0 到 1000 范围之外的都强制转成默认的 100。
+// 
 
 ```java
-query.setLimit(10); // 限制最多10个结果
+query.setLimit(10); // 限制最多10个结果 // get at most 10 results
 ```
 
 在数据较多的情况下，分页显示数据是比较合理的解决办法，`setSkip` 方法可以做到跳过首次查询的多少条数据来实现分页的功能。
@@ -579,7 +587,7 @@ query.whereNotContainedIn("pubUser", Arrays.asList(names));
 ```
 
 ### 查询字符串值
-
+query string 
 使用 `whereStartsWith` 方法来限制字符串的值以另一个字符串开头。非常类似 MySQL 的 `LIKE` 查询，这样的查询会走索引，因此对于大数据集也一样高效：
 
 ```java
@@ -603,7 +611,7 @@ query.findInBackground(new FindCallback<AVObject>() {
 ```
 
 查询字符串中包含 XX 内容，可用如下方法：
-
+// query contians
 ```java
 // 查询 pubUser 字段的值中包含 "LeanCloud" 字的数据
 AVQuery query = new AVQuery("Post");
