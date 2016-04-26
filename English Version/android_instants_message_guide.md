@@ -518,9 +518,10 @@ session.open();
 ```
 
 ##聊天记录查询
-
+// chatting history query
 聊天记录的查询的基本方法跟 AVQuery 类似但是略有不同。
 针对 Session 的聊天记录和聊天室 Group 的聊天记录查询略有不同，但是基本都是一样：
+// query chatting history is only minor differ with AVQuery
 
 ```java
 //查询 Session 里的聊天记录
