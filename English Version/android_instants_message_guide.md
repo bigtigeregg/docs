@@ -428,7 +428,7 @@ public class DemoGroupMessageReceiver extends AVGroupMessageReceiver{
 
 ### 退出群组
 退出群组的代码也相对比较简单:
-
+// quit group
 ```java
 Session session = Session.getInstance(selfId);
 Group group = session.getGroup(groupId);
@@ -436,7 +436,7 @@ group.quit();
 ```
 
 如果你想要监听是否真正成功退组，你可以在Receiver中进行检测：
-
+// quit group call back
 ```java
 public class DemoGroupMessageReceiver extends AVGroupMessageReceiver{
 
